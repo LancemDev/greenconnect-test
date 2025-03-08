@@ -13,4 +13,3 @@ earthengine-api
 google-cloud-storage
 gunicorn
 sentinelsat
-openai_service
