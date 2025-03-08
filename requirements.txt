@@ -13,3 +13,4 @@ earthengine-api
 google-cloud-storage
 gunicorn
 sentinelsat
+shapely
