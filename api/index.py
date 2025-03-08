@@ -6,8 +6,8 @@ from datetime import datetime, timedelta
 import json
 import secrets
 from werkzeug.security import generate_password_hash, check_password_hash
-from openai_service import analyze_project, generate_assessment_report
-from satellite_service import fetch_satellite_imagery, analyze_satellite_data
+from .openai_service import analyze_project, generate_assessment_report  # Use relative import
+from .satellite_service import fetch_satellite_imagery, analyze_satellite_data  # Use relative import
 from urllib.parse import urlparse
 
 # Load environment variables
