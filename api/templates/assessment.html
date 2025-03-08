@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+{% block title %}Project Assessment{% endblock %}
+{% block content %}
+<div class="glass p-8 rounded-lg max-w-4xl mx-auto">
+    <h2 class="text-3xl font-bold mb-6">Project Assessment</h2>
+    
+    {% if project %}
+        <div class="mb-6">
+            <h3 class="text-2xl font-semibold">Project Details</h3>
+            <p><strong>Name:</strong> {{ project.project_name }}</p>
+            <p><strong>Type:</strong> {{ project.project_type }}</p>
+            <p><strong>Location:</strong> Latitude {{ project.location_lat }}, Longitude {{ project.location_lng }}</p>
+            <p><strong>Area:</strong> {{ project.area_size }} {{ project.area_unit }}</p>
+            <p><strong>Description:</strong> {{ project.description }}</p>
+            <p><strong>Status:</strong> {{ project.status }}</p>
+        </div>
+    {% endif %}
+    
+    {% if assessment %}
+        <div class="mb-6">
+            <h3 class="text-2xl font-semibold">Assessment Results</h3>
+            <p><strong>Carbon Estimate:</strong> {{ assessment.carbon_estimate }} tons</p>
+            <p><strong>Confidence Score:</strong> {{ assessment.confidence_score }}%</p>
+            <p><strong>Methodology:</strong> {{ assessment.methodology }}</p>
+            <p><strong>AI Model Version:</strong> {{ assessment.ai_model_version }}</p>
+            <p><strong>Verification Status:</strong> {{ assessment.verification_status }}</p>
+        </div>
+    {% else %}
+        <div class="mb-6">
+            <p>No assessment results available.</p>
+        </div>
+    {% endif %}
+    
+    {% if satellite_data %}
+        <div class="mb-6">
+            <h3 class="text-2xl font-semibold">Satellite Data</h3>
+            <p><strong>NDVI Value:</strong> {{ satellite_data.ndvi_value }}</p>
+            <p><strong>Land Cover Classification:</strong> {{ satellite_data.land_cover_classification }}</p>
+            <p><strong>Cloud Cover Percentage:</strong> {{ satellite_data.cloud_cover_percentage }}%</p>
+            <p><strong>Source:</strong> {{ satellite_data.source }}</p>
+            <p><strong>Raw Data URL:</strong> <a href="{{ satellite_data.raw_data_url }}" target="_blank" class="text-blue-500 hover:underline">View Raw Data</a></p>
+            <p><strong>Processed Data URL:</strong> <a href="{{ satellite_data.processed_data_url }}" target="_blank" class="text-blue-500 hover:underline">View Processed Data</a></p>
+        </div>
+    {% else %}
+        <div class="mb-6">
+            <p>No satellite data available.</p>
+        </div>
+    {% endif %}
+    
+    <div class="mt-8">
+        <a href="{{ url_for('dashboard') }}" class="glass px-6 py-3 rounded-full text-white font-semibold hover:bg-green-600 transition">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

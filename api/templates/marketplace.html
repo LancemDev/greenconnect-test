@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block title %}Marketplace{% endblock %}
+{% block content %}
+<div class="glass p-8 rounded-lg">
+    <h2 class="text-3xl font-bold mb-6">Carbon Credit Marketplace</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for credit in credits %}
+        <div class="glass p-4 rounded-lg">
+            <h3 class="text-xl font-semibold mb-4">{{ credit.project_name }}</h3>
+            <p class="text-gray-700 mb-2">Amount: {{ credit.credit_amount }} tons CO2e</p>
+            <p class="text-gray-700 mb-2">Price: ${{ credit.price_per_credit }} per ton</p>
+            <a href="/marketplace/buy/{{ credit.id }}" class="glass px-4 py-2 rounded-full text-white font-semibold hover:bg-green-600 transition">Buy Credits</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,148 @@
+{% extends "layout.html" %}
+{% block title %}Register Project{% endblock %}
+{% block content %}
+<div class="glass p-8 rounded-lg max-w-4xl mx-auto">
+    <h2 class="text-3xl font-bold mb-6">Register Your Project</h2>
+    <form method="POST" action="/project/register">
+        <div class="mb-4">
+            <label for="project_name" class="block text-gray-700">Project Name</label>
+            <input type="text" id="project_name" name="project_name" class="w-full p-2 border rounded" required>
+        </div>
+        <div class="mb-4">
+            <label for="project_type" class="block text-gray-700">Project Type</label>
+            <select id="project_type" name="project_type" class="w-full p-2 border rounded" required>
+                <option value="forestry">Forestry</option>
+                <option value="agriculture">Agriculture</option>
+                <option value="agroforestry">Agroforestry</option>
+                <option value="wetland">Wetland</option>
+                <option value="other">Other</option>
+            </select>
+        </div>
+        <div class="mb-4">
+            <label for="latitude" class="block text-gray-700">Latitude</label>
+            <input type="text" id="latitude" name="latitude" class="w-full p-2 border rounded" required readonly>
+        </div>
+        <div class="mb-4">
+            <label for="longitude" class="block text-gray-700">Longitude</label>
+            <input type="text" id="longitude" name="longitude" class="w-full p-2 border rounded" required readonly>
+        </div>
+        <div id="map" class="mb-4" style="height: 500px;"></div>
+        <div class="mb-4">
+            <label for="area_size" class="block text-gray-700">Area Size</label>
+            <input type="text" id="area_size" name="area_size" class="w-full p-2 border rounded" required>
+        </div>
+        <div class="mb-4">
+            <label for="area_unit" class="block text-gray-700">Area Unit</label>
+            <select id="area_unit" name="area_unit" class="w-full p-2 border rounded" required>
+                <option value="hectares">Hectares</option>
+                <option value="acres">Acres</option>
+            </select>
+        </div>
+        <div class="mb-4">
+            <label for="description" class="block text-gray-700">Description</label>
+            <textarea id="description" name="description" class="w-full p-2 border rounded" required></textarea>
+        </div>
+        <div class="mb-4">
+            <label for="start_date" class="block text-gray-700">Start Date</label>
+            <input type="date" id="start_date" name="start_date" class="w-full p-2 border rounded" required>
+        </div>
+        <div class="mb-4">
+            <label for="boundary_geojson" class="block text-gray-700">Boundary GeoJSON</label>
+            <textarea id="boundary_geojson" name="boundary_geojson" class="w-full p-2 border rounded" readonly></textarea>
+        </div>
+        <button type="submit" class="glass px-6 py-3 rounded-full text-white font-semibold hover:bg-green-600 transition">Register Project</button>
+    </form>
+</div>
+
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<!-- Leaflet Control Geocoder CSS and JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+<!-- Leaflet Draw CSS and JS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+<script>
+    // Initialize the map
+    var map = L.map('map').setView([0, 0], 2);
+
+    // Add OpenStreetMap tiles
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Add a marker to the map
+    var marker = L.marker([0, 0], { draggable: true }).addTo(map);
+
+    // Update the latitude and longitude fields when the marker is dragged
+    marker.on('dragend', function (e) {
+        var lat = marker.getLatLng().lat;
+        var lng = marker.getLatLng().lng;
+        document.getElementById('latitude').value = lat;
+        document.getElementById('longitude').value = lng;
+    });
+
+    // Update the marker position when the map is clicked
+    map.on('click', function (e) {
+        var lat = e.latlng.lat;
+        var lng = e.latlng.lng;
+        marker.setLatLng([lat, lng]);
+        document.getElementById('latitude').value = lat;
+        document.getElementById('longitude').value = lng;
+    });
+
+    // Add search functionality
+    var geocoder = L.Control.geocoder({
+        defaultMarkGeocode: false
+    }).on('markgeocode', function(e) {
+        var latlng = e.geocode.center;
+        map.setView(latlng, 15);
+        marker.setLatLng(latlng);
+        document.getElementById('latitude').value = latlng.lat;
+        document.getElementById('longitude').value = latlng.lng;
+    }).addTo(map);
+
+    // Add drawing tools
+    var drawnItems = new L.FeatureGroup();
+    map.addLayer(drawnItems);
+
+    var drawControl = new L.Control.Draw({
+        edit: {
+            featureGroup: drawnItems
+        },
+        draw: {
+            polygon: true,
+            polyline: false,
+            rectangle: true,
+            circle: false,
+            marker: false
+        }
+    });
+    map.addControl(drawControl);
+
+    // Handle the creation of new shapes
+    map.on(L.Draw.Event.CREATED, function (event) {
+        var layer = event.layer;
+        drawnItems.addLayer(layer);
+        var geojson = drawnItems.toGeoJSON();
+        document.getElementById('boundary_geojson').value = JSON.stringify(geojson);
+    });
+
+    // Handle the editing of shapes
+    map.on(L.Draw.Event.EDITED, function (event) {
+        var layers = event.layers;
+        layers.eachLayer(function (layer) {
+            var geojson = drawnItems.toGeoJSON();
+            document.getElementById('boundary_geojson').value = JSON.stringify(geojson);
+        });
+    });
+
+    // Handle the deletion of shapes
+    map.on(L.Draw.Event.DELETED, function (event) {
+        var geojson = drawnItems.toGeoJSON();
+        document.getElementById('boundary_geojson').value = JSON.stringify(geojson);
+    });
+</script>
+{% endblock %}

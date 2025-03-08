@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+{% block title %}Buy Carbon Credits{% endblock %}
+{% block content %}
+<div class="glass p-8 rounded-lg max-w-lg mx-auto">
+    <h2 class="text-3xl font-bold mb-6">Buy Carbon Credits</h2>
+    
+    {% if credit %}
+        <div class="mb-6">
+            <h3 class="text-2xl font-semibold">Credit Details</h3>
+            <p><strong>Project Name:</strong> {{ credit.project_name }}</p>
+            <p><strong>Credit Amount:</strong> {{ credit.credit_amount }} tons</p>
+            <p><strong>Price per Credit:</strong> ${{ credit.price_per_credit }}</p>
+            <p><strong>Certificate ID:</strong> {{ credit.certificate_id }}</p>
+            <p><strong>Verification Document:</strong> <a href="{{ credit.verification_document_url }}" target="_blank" class="text-blue-500 hover:underline">View Document</a></p>
+        </div>
+        
+        <form method="POST" action="{{ url_for('buy_credit', credit_id=credit.id) }}">
+            <div class="mb-4">
+                <label for="amount" class="block text-gray-700">Amount to Purchase (tons)</label>
+                <input type="number" id="amount" name="amount" class="w-full p-2 border rounded" max="{{ credit.credit_amount }}" required>
+            </div>
+            <button type="submit" class="glass px-6 py-3 rounded-full text-white font-semibold hover:bg-green-600 transition">Buy Credits</button>
+        </form>
+    {% else %}
+        <div class="mb-6">
+            <p>Credit not available for purchase.</p>
+        </div>
+    {% endif %}
+    
+    <div class="mt-8">
+        <a href="{{ url_for('marketplace') }}" class="glass px-6 py-3 rounded-full text-white font-semibold hover:bg-green-600 transition">Back to Marketplace</a>
+    </div>
+</div>
+{% endblock %}

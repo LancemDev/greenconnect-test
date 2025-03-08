@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="glass p-8 rounded-lg">
+    <h2 class="text-3xl font-bold mb-6">Dashboard</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="glass p-4 rounded-lg">
+            <h3 class="text-xl font-semibold mb-4">Your Projects</h3>
+            <ul>
+                {% for project in projects %}
+                <li class="mb-2">
+                    <a href="{{ url_for('project_details', project_id=project.id) }}" class="text-blue-500 hover:underline">{{ project.project_name }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="glass p-4 rounded-lg">
+            <h3 class="text-xl font-semibold mb-4">Carbon Credits</h3>
+            <ul>
+                {% for credit in credits %}
+                <li class="mb-2">
+                    <span>{{ credit.credit_amount }} tons CO2e</span> - <a href="{{ credit.verification_document_url }}" class="text-blue-500 hover:underline">View Certificate</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="glass p-4 rounded-lg">
+            <h3 class="text-xl font-semibold mb-4">Actions</h3>
+            <ul>
+                <li class="mb-2">
+                    <a href="{{ url_for('register_project') }}" class="text-green-500 hover:underline">Register New Project</a>
+                </li>
+                <li class="mb-2">
+                    <a href="{{ url_for('marketplace') }}" class="text-green-500 hover:underline">Buy Carbon Credits</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
