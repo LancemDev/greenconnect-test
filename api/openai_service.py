@@ -8,7 +8,11 @@ import logging
 load_dotenv()
 
 # Configure OpenAI API client
-client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+api_key = os.getenv('OPENAI_API_KEY')
+if not api_key:
+    raise ValueError("The OPENAI_API_KEY environment variable is not set")
+
+client = OpenAI(api_key=api_key)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
