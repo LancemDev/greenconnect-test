@@ -1,1 +1,15 @@
-Flask==3.0.3
+Flask
+Flask-SQLAlchemy
+Flask-Login
+Flask-WTF
+pymysql
+python-dotenv
+openai
+cryptography
+Pillow
+requests
+geopy
+earthengine-api
+google-cloud-storage
+gunicorn
+sentinelsat
